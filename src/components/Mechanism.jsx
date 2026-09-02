@@ -1,3 +1,4 @@
+import iceBand from '../assets/ice-band.jpg'
 import { Container, Eyebrow, SectionTitle } from './ui'
 
 const nodes = [
@@ -37,8 +38,8 @@ const nodes = [
 
 export default function Mechanism() {
   return (
-    <section id="mechanism" className="bg-glacier-pale">
-      <Container className="py-24 md:py-32">
+    <section id="mechanism" className="seam-ivory-to-glacier-pale">
+      <Container className="pt-24 md:pt-32">
         <div className="max-w-3xl">
           <SectionTitle>The chemistry of working in tandem.</SectionTitle>
           <p className="mt-6 text-base leading-relaxed text-taupe md:text-lg">
@@ -47,9 +48,24 @@ export default function Mechanism() {
             breaks hydrogen peroxide down into water and oxygen.
           </p>
         </div>
+      </Container>
 
+      {/* Full-bleed glacial band: the ice that the chemistry comes from */}
+      <figure className="relative my-14 h-52 w-full overflow-hidden sm:h-64 md:h-80">
+        <img
+          src={iceBand}
+          alt="Glacial ice with deep blue crevasse lanes and pale turquoise meltwater"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div
+          className="absolute inset-0 bg-gradient-to-b from-glacier-pale/70 via-transparent to-glacier-pale/70"
+          aria-hidden="true"
+        />
+      </figure>
+
+      <Container className="pb-24 md:pb-32">
         {/* The pathway */}
-        <div className="mt-16">
+        <div>
           <PathwayDesktop />
           <PathwayMobile />
         </div>

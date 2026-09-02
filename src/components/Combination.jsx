@@ -1,3 +1,4 @@
+import vialsBand from '../assets/vials-band.jpg'
 import { Container, Eyebrow, SectionTitle } from './ui'
 
 const cards = [
@@ -17,8 +18,8 @@ const cards = [
 
 export default function Combination() {
   return (
-    <section id="combination" className="bg-ivory">
-      <Container className="py-24 md:py-32">
+    <section id="combination" className="seam-glacier-pale-to-ivory">
+      <Container className="pt-24 md:pt-32">
         <div className="max-w-3xl">
           <Eyebrow>The combination</Eyebrow>
           <SectionTitle className="mt-5">Two enzymes, one origin.</SectionTitle>
@@ -30,8 +31,22 @@ export default function Combination() {
             chemistry the formulation needs.
           </p>
         </div>
+      </Container>
 
-        <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-2">
+      {/* Editorial band: the system as a quiet laboratory still life */}
+      <figure className="mx-auto mt-14 w-full max-w-6xl px-6 md:px-10">
+        <img
+          src={vialsBand}
+          alt="Two minimal amber glass vials with white cap bands on a warm ivory surface"
+          className="h-52 w-full rounded-lg object-cover object-center sm:h-64 md:h-72"
+        />
+        <figcaption className="mt-3 text-center font-display text-[11px] font-medium uppercase tracking-[0.2em] text-taupe">
+          Two components. One defined system.
+        </figcaption>
+      </figure>
+
+      <Container className="pt-14 pb-24 md:pb-32">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {cards.map((card) => (
             <article
               key={card.name}

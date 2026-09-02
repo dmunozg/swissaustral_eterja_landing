@@ -39,3 +39,33 @@ body {
   background-color: var(--color-glacial-soft);
   color: var(--color-espresso);
 }
+
+/*
+ * Section seams: each section eases in from the previous section's
+ * background color over the first ~180px, so light/dark section
+ * changes read as a soft gradient rather than a hard cut.
+ */
+.seam-ivory-to-ivory-deep {
+  background: linear-gradient(180deg, var(--color-ivory) 0, var(--color-ivory-deep) 180px);
+}
+
+.seam-ivory-deep-to-ivory {
+  background: linear-gradient(180deg, var(--color-ivory-deep) 0, var(--color-ivory) 180px);
+}
+
+.seam-ivory-to-glacier-pale {
+  background: linear-gradient(180deg, var(--color-ivory) 0, var(--color-glacier-pale) 200px);
+}
+
+.seam-glacier-pale-to-ivory {
+  background: linear-gradient(180deg, var(--color-glacier-pale) 0, var(--color-ivory) 180px);
+}
+
+/*
+ * The light→dark seam (contact section) is a standalone gradient
+ * band rendered between sections in App.jsx, so no text ever sits
+ * on the transition.
+ */
+.seam-band-ivory-to-espresso {
+  background: linear-gradient(180deg, var(--color-ivory) 0, var(--color-espresso) 100%);
+}

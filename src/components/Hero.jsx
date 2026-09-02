@@ -1,12 +1,13 @@
-import heroSkin from '../assets/hero-skin.jpg'
+import heroMobile from '../assets/hero-mobile.jpg'
+import heroDesktop from '../assets/hero-desktop.jpg'
 import { Button, Container, Eyebrow } from './ui'
 
 export default function Hero() {
   return (
     <section id="top" className="relative overflow-hidden bg-ivory">
-      <Container className="grid min-h-[92svh] grid-cols-1 items-stretch gap-0 pt-28 md:grid-cols-[1.05fr_1fr] md:pt-0">
-        {/* Copy panel */}
-        <div className="flex flex-col justify-center px-6 py-16 md:px-10 md:py-24">
+      <Container className="grid grid-cols-1 md:grid-cols-[1.05fr_1fr]">
+        {/* Copy panel — below the image on mobile, left on desktop */}
+        <div className="order-2 flex flex-col justify-center px-6 pb-12 pt-24 sm:pb-16 md:order-1 md:px-10 md:py-24">
           <Eyebrow>For skincare formulation teams</Eyebrow>
 
           <h1 className="mt-6 font-display text-4xl font-semibold leading-[1.08] tracking-tight text-espresso md:text-[3.4rem]">
@@ -41,17 +42,35 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Visual panel */}
-        <div className="relative min-h-[42svh] md:min-h-full">
-          <img
-            src={heroSkin}
-            alt="Natural healthy skin texture in warm ivory tones"
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-          <div
-            className="absolute inset-0 bg-gradient-to-r from-ivory via-transparent to-transparent md:w-1/3"
-            aria-hidden="true"
-          />
+        {/* Visual panel — first in the fold on mobile */}
+        <div className="order-1 relative md:order-2">
+          {/* Mobile: full-bleed, faded into the copy below */}
+          <div className="relative min-h-[44svh] md:hidden">
+            <img
+              src={heroMobile}
+              alt="Natural healthy skin texture in warm ivory tones"
+              className="absolute inset-0 h-full w-full object-cover object-[50%_35%]"
+            />
+            {/* Veil the top so the header stays legible over the image */}
+            <div
+              className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-ivory/80 via-ivory/25 to-transparent"
+              aria-hidden="true"
+            />
+            {/* Melt the image bottom into the copy panel below */}
+            <div
+              className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-ivory to-transparent"
+              aria-hidden="true"
+            />
+          </div>
+
+          {/* Desktop: the full 3:4 composition, framed — nothing cropped */}
+          <div className="hidden h-full flex-col items-center justify-center px-10 py-16 md:flex">
+            <img
+              src={heroDesktop}
+              alt="Natural healthy skin texture in warm ivory tones"
+              className="w-full max-w-[420px] rounded-lg border border-espresso/10 shadow-[0_32px_64px_-32px_rgba(46,38,32,0.35)]"
+            />
+          </div>
         </div>
       </Container>
     </section>

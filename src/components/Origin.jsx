@@ -16,7 +16,7 @@ const enzymes = [
 
 export default function Origin() {
   return (
-    <section id="origin" className="bg-ivory">
+    <section id="origin" className="seam-ivory-deep-to-ivory">
       <Container className="grid grid-cols-1 gap-0 py-24 md:grid-cols-[1.05fr_1fr] md:py-32">
         {/* Copy panel */}
         <div className="flex flex-col justify-center px-6 py-12 md:px-10 md:py-20">

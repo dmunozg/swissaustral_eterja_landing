@@ -17,6 +17,8 @@ export default function App() {
         <Origin />
         <Mechanism />
         <Combination />
+        {/* Light→dark seam: soft gradient band into the contact section */}
+        <div className="seam-band-ivory-to-espresso h-24 md:h-32" aria-hidden="true" />
         <Contact />
       </main>
       <Footer />

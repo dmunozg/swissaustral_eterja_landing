@@ -1,3 +1,4 @@
+import challengeBand from '../assets/challenge-band.jpg'
 import { Container, CiteMark, Eyebrow, SectionTitle } from './ui'
 
 const sources = [
@@ -32,7 +33,7 @@ const damage = [
 
 export default function Challenge() {
   return (
-    <section id="challenge" className="bg-ivory-deep">
+    <section id="challenge" className="seam-ivory-to-ivory-deep">
       <Container className="py-24 md:py-32">
         <div className="max-w-3xl">
           <Eyebrow>The formulation challenge</Eyebrow>
@@ -49,6 +50,18 @@ export default function Challenge() {
             <CiteMark n={2} />
           </p>
         </div>
+
+        {/* Editorial band: skin under warm directional light */}
+        <figure className="mt-14">
+          <img
+            src={challengeBand}
+            alt="Shoulder and collarbone under warm directional light, showing natural skin texture"
+            className="h-56 w-full rounded-lg object-cover object-[62%_45%] sm:h-72 md:h-80"
+          />
+          <figcaption className="mt-3 text-center font-display text-[11px] font-medium uppercase tracking-[0.2em] text-taupe">
+            Every day, the skin is under oxidative pressure — visible or not.
+          </figcaption>
+        </figure>
 
         <div className="mt-16 grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-espresso/10 bg-espresso/10 md:grid-cols-3">
           <Block
