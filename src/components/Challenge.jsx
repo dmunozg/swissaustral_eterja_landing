@@ -1,6 +1,6 @@
 import challengeBand from '../assets/challenge-band.jpg'
 import Reveal from './Reveal'
-import { Container, CiteMark, Eyebrow, SectionTitle } from './ui'
+import { Button, Container, CiteMark, Eyebrow, SectionTitle } from './ui'
 
 const sources = [
   {
@@ -101,6 +101,12 @@ export default function Challenge() {
             a default expectation — not a premium add-on — in product development
             and claims substantiation.
           </p>
+        </Reveal>
+
+        <Reveal delay={150} className="mt-10">
+          <Button href="#origin" variant="highlight">
+            Meet the Eterja SC system
+          </Button>
         </Reveal>
       </Container>
     </section>

@@ -1,6 +1,6 @@
 import iceBand from '../assets/ice-band.jpg'
 import Reveal from './Reveal'
-import { Container, Eyebrow, SectionTitle } from './ui'
+import { Button, Container, Eyebrow, SectionTitle } from './ui'
 
 const nodes = [
   {
@@ -105,6 +105,12 @@ export default function Mechanism() {
             A clear mechanism is the starting point. The next question is how the
             system fits into formulation development.
           </p>
+        </Reveal>
+
+        <Reveal delay={150} className="mt-8 flex justify-center">
+          <Button href="#combination" variant="highlight">
+            See the full system
+          </Button>
         </Reveal>
       </Container>
     </section>

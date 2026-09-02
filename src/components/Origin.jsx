@@ -1,6 +1,6 @@
 import glacier from '../assets/section3-glacier.jpg'
 import Reveal from './Reveal'
-import { Container, Eyebrow, SectionTitle } from './ui'
+import { Button, Container, Eyebrow, SectionTitle } from './ui'
 
 const enzymes = [
   {
@@ -70,13 +70,9 @@ export default function Origin() {
             <p className="text-base leading-relaxed text-espresso">
               Two enzymes. One coordinated response to oxidative reactivity.
             </p>
-            <a
-              href="#mechanism"
-              className="mt-3 inline-flex items-center gap-2 font-display text-sm font-semibold text-glacial-deep transition-colors hover:text-espresso"
-            >
-              Next: how SOD and catalase work together
-              <span aria-hidden="true">→</span>
-            </a>
+            <Button href="#mechanism" variant="highlight" className="mt-5">
+              See how they work together
+            </Button>
           </div>
         </Reveal>
 

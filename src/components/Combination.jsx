@@ -1,6 +1,6 @@
 import vialsBand from '../assets/vials-band.jpg'
 import Reveal from './Reveal'
-import { Container, Eyebrow, SectionTitle } from './ui'
+import { Button, Container, Eyebrow, SectionTitle } from './ui'
 
 const cards = [
   {
@@ -87,15 +87,16 @@ export default function Combination() {
         </Reveal>
 
         <Reveal className="mt-10">
-          <p className="text-center text-sm leading-relaxed text-taupe">
-            See the chemistry work, then{' '}
-            <a
-              href="#contact"
-              className="font-semibold text-glacial-deep underline decoration-glacial/40 underline-offset-4 transition-colors hover:text-espresso"
-            >
-              start the technical conversation.
-            </a>
+          <p className="mx-auto max-w-2xl text-center text-sm leading-relaxed text-taupe">
+            Ready to put a defined two-enzyme system into your next
+            formulation?
           </p>
+        </Reveal>
+
+        <Reveal delay={150} className="mt-8 flex justify-center">
+          <Button href="#contact" variant="highlight">
+            Request the Technical Dossier
+          </Button>
         </Reveal>
       </Container>
     </section>

@@ -214,3 +214,45 @@ body {
     transform: none !important;
   }
 }
+
+/*
+ * Highlighted CTA — the prominent call-to-action used to anchor a
+ * section. A soft pulsing glow halo sits behind the button so it draws
+ * the eye without the button itself scaling (which reads as "broken").
+ * Purely decorative motion; the button stays fully interactive and is
+ * static under prefers-reduced-motion.
+ */
+.highlight-cta {
+  position: relative;
+  isolation: isolate;
+}
+.highlight-cta::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  background: var(--color-glacial-deep);
+  filter: blur(12px);
+  opacity: 0.55;
+  z-index: -1;
+  pointer-events: none;
+  animation: ctaPulse 2.6s ease-in-out infinite;
+}
+@keyframes ctaPulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.04);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .highlight-cta::before {
+    animation: none !important;
+    transform: none !important;
+    opacity: 0.6 !important;
+  }
+}

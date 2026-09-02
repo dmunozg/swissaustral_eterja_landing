@@ -29,7 +29,7 @@ export default function Hero() {
 
           <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
             <Button href="#mechanism">Follow the Pathway</Button>
-            <Button href="#contact" variant="secondary">
+            <Button href="#contact" variant="highlight">
               Request the Technical Dossier
             </Button>
           </div>

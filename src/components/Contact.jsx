@@ -106,7 +106,7 @@ export default function Contact() {
 
             <button
               type="button"
-              className="w-full rounded-full bg-glacial px-7 py-4 font-display text-sm font-semibold tracking-wide text-ivory transition-colors hover:bg-glacial-deep"
+              className="highlight-cta w-full rounded-full bg-glacial-deep px-9 py-4 font-display text-lg font-bold tracking-wide text-ivory transition-colors hover:bg-glacial"
             >
               Send your message
             </button>
