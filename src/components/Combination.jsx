@@ -1,4 +1,5 @@
 import vialsBand from '../assets/vials-band.jpg'
+import Reveal from './Reveal'
 import { Container, Eyebrow, SectionTitle } from './ui'
 
 const cards = [
@@ -20,7 +21,7 @@ export default function Combination() {
   return (
     <section id="combination" className="seam-glacier-pale-to-ivory">
       <Container className="pt-24 md:pt-32">
-        <div className="max-w-3xl">
+        <Reveal className="max-w-3xl">
           <Eyebrow>The combination</Eyebrow>
           <SectionTitle className="mt-5">Two enzymes, one origin.</SectionTitle>
           <p className="mt-6 text-base leading-relaxed text-taupe md:text-lg">
@@ -30,23 +31,25 @@ export default function Combination() {
             Field — selected because cold-adapted biology already does the
             chemistry the formulation needs.
           </p>
-        </div>
+        </Reveal>
       </Container>
 
       {/* Editorial band: the system as a quiet laboratory still life */}
-      <figure className="mx-auto mt-14 w-full max-w-6xl px-6 md:px-10">
+      <Reveal media className="mx-auto mt-14 w-full max-w-6xl px-6 md:px-10">
         <img
           src={vialsBand}
           alt="Two minimal amber glass vials with white cap bands on a warm ivory surface"
           className="h-52 w-full rounded-lg object-cover object-center sm:h-64 md:h-72"
         />
-        <figcaption className="mt-3 text-center font-display text-[11px] font-medium uppercase tracking-[0.2em] text-taupe">
+      </Reveal>
+      <Reveal delay={150} className="mx-auto mt-3 w-full max-w-6xl px-6 md:px-10">
+        <figcaption className="text-center font-display text-[11px] font-medium uppercase tracking-[0.2em] text-taupe">
           Two components. One defined system.
         </figcaption>
-      </figure>
+      </Reveal>
 
       <Container className="pt-14 pb-24 md:pb-32">
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <Reveal stag className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {cards.map((card) => (
             <article
               key={card.name}
@@ -64,30 +67,36 @@ export default function Combination() {
               </p>
             </article>
           ))}
-        </div>
+        </Reveal>
 
-        <p className="mt-10 text-center font-display text-base font-semibold tracking-tight text-espresso md:text-lg">
-          Two recombinant enzymes. One defined complementary system, designed
-          for cosmetic formulation.
-        </p>
+        <Reveal className="mt-10">
+          <p className="text-center font-display text-base font-semibold tracking-tight text-espresso md:text-lg">
+            Two recombinant enzymes. One defined complementary system, designed
+            for cosmetic formulation.
+          </p>
+        </Reveal>
 
-        <p className="mx-auto mt-8 max-w-2xl text-center text-sm leading-relaxed text-taupe">
-          <span className="font-display font-semibold uppercase tracking-[0.16em] text-espresso">
-            Origin
-          </span>{' '}
-          — both enzymes are derived from a microorganism identified in the
-          Southern Patagonian Ice Field.
-        </p>
+        <Reveal className="mt-8">
+          <p className="mx-auto max-w-2xl text-center text-sm leading-relaxed text-taupe">
+            <span className="font-display font-semibold uppercase tracking-[0.16em] text-espresso">
+              Origin
+            </span>{' '}
+            — both enzymes are derived from a microorganism identified in the
+            Southern Patagonian Ice Field.
+          </p>
+        </Reveal>
 
-        <p className="mt-10 text-center text-sm leading-relaxed text-taupe">
-          See the chemistry work, then{' '}
-          <a
-            href="#contact"
-            className="font-semibold text-glacial-deep underline decoration-glacial/40 underline-offset-4 transition-colors hover:text-espresso"
-          >
-            start the technical conversation.
-          </a>
-        </p>
+        <Reveal className="mt-10">
+          <p className="text-center text-sm leading-relaxed text-taupe">
+            See the chemistry work, then{' '}
+            <a
+              href="#contact"
+              className="font-semibold text-glacial-deep underline decoration-glacial/40 underline-offset-4 transition-colors hover:text-espresso"
+            >
+              start the technical conversation.
+            </a>
+          </p>
+        </Reveal>
       </Container>
     </section>
   )

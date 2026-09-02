@@ -12,7 +12,7 @@ export default function Hero() {
       <div className="hero-background__veil absolute inset-0 -z-10" aria-hidden="true" />
 
       <Container className="flex min-h-[100svh] items-end pb-14 pt-32 sm:pb-16 md:items-center md:py-28">
-        <div className="max-w-[650px] md:w-[52%]">
+        <div className="hero-intro max-w-[650px] md:w-[52%]">
           <Eyebrow>For skincare formulation teams</Eyebrow>
 
           <h1 className="mt-6 font-display text-4xl font-semibold leading-[1.08] tracking-tight text-espresso sm:text-5xl md:text-[3.4rem]">

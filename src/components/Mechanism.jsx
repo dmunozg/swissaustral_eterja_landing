@@ -1,4 +1,5 @@
 import iceBand from '../assets/ice-band.jpg'
+import Reveal from './Reveal'
 import { Container, Eyebrow, SectionTitle } from './ui'
 
 const nodes = [
@@ -40,23 +41,25 @@ export default function Mechanism() {
   return (
     <section id="mechanism" className="seam-ivory-to-glacier-pale">
       <Container className="pt-24 md:pt-32">
-        <div className="max-w-3xl">
+        <Reveal className="max-w-3xl">
           <SectionTitle>The chemistry of working in tandem.</SectionTitle>
           <p className="mt-6 text-base leading-relaxed text-taupe md:text-lg">
             Superoxide dismutase and catalase act in sequence. The first
             enzyme converts superoxide into hydrogen peroxide; the second then
             breaks hydrogen peroxide down into water and oxygen.
           </p>
-        </div>
+        </Reveal>
       </Container>
 
       {/* Full-bleed glacial band: the ice that the chemistry comes from */}
       <figure className="relative my-14 h-52 w-full overflow-hidden sm:h-64 md:h-80">
-        <img
-          src={iceBand}
-          alt="Glacial ice with deep blue crevasse lanes and pale turquoise meltwater"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
+        <Reveal media className="absolute inset-0">
+          <img
+            src={iceBand}
+            alt="Glacial ice with deep blue crevasse lanes and pale turquoise meltwater"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        </Reveal>
         <div
           className="absolute inset-0 bg-gradient-to-b from-glacier-pale/70 via-transparent to-glacier-pale/70"
           aria-hidden="true"
@@ -70,33 +73,39 @@ export default function Mechanism() {
           <PathwayMobile />
         </div>
 
-        <p className="mx-auto mt-14 max-w-3xl text-center text-base leading-relaxed text-espresso">
-          SOD begins the conversion of superoxide. Catalase follows by
-          processing the hydrogen peroxide formed in that reaction. Together,
-          they create a defined two-enzyme pathway for managing connected
-          oxidative species.
-        </p>
-
-        <details className="group mx-auto mt-10 max-w-3xl border border-espresso/15 bg-ivory">
-          <summary className="cursor-pointer list-none px-6 py-4 font-display text-sm font-semibold uppercase tracking-[0.16em] text-espresso select-none">
-            Why the sequence matters
-            <span className="ml-2 inline-block text-glacial-deep transition-transform group-open:rotate-90">
-              ›
-            </span>
-          </summary>
-          <p className="border-t border-espresso/10 px-6 py-5 text-sm leading-relaxed text-taupe">
-            SOD changes the reactive species rather than removing oxygen from
-            the system. The resulting hydrogen peroxide therefore becomes the
-            substrate for catalase. The two reactions are chemically connected,
-            which is why the enzymes are presented as a tandem system rather
-            than as unrelated antioxidant claims.
+        <Reveal className="mt-14">
+          <p className="mx-auto max-w-3xl text-center text-base leading-relaxed text-espresso">
+            SOD begins the conversion of superoxide. Catalase follows by
+            processing the hydrogen peroxide formed in that reaction. Together,
+            they create a defined two-enzyme pathway for managing connected
+            oxidative species.
           </p>
-        </details>
+        </Reveal>
 
-        <p className="mx-auto mt-12 max-w-2xl text-center text-sm leading-relaxed text-taupe">
-          A clear mechanism is the starting point. The next question is how the
-          system fits into formulation development.
-        </p>
+        <Reveal className="mt-10">
+          <details className="group mx-auto max-w-3xl border border-espresso/15 bg-ivory">
+            <summary className="cursor-pointer list-none px-6 py-4 font-display text-sm font-semibold uppercase tracking-[0.16em] text-espresso select-none">
+              Why the sequence matters
+              <span className="ml-2 inline-block text-glacial-deep transition-transform group-open:rotate-90">
+                ›
+              </span>
+            </summary>
+            <p className="border-t border-espresso/10 px-6 py-5 text-sm leading-relaxed text-taupe">
+              SOD changes the reactive species rather than removing oxygen from
+              the system. The resulting hydrogen peroxide therefore becomes the
+              substrate for catalase. The two reactions are chemically connected,
+              which is why the enzymes are presented as a tandem system rather
+              than as unrelated antioxidant claims.
+            </p>
+          </details>
+        </Reveal>
+
+        <Reveal className="mt-12">
+          <p className="mx-auto max-w-2xl text-center text-sm leading-relaxed text-taupe">
+            A clear mechanism is the starting point. The next question is how the
+            system fits into formulation development.
+          </p>
+        </Reveal>
       </Container>
     </section>
   )
@@ -167,7 +176,9 @@ function PathwayDesktop() {
       {nodes.map((node, i) => (
         <div key={node.name} className="contents">
           <div className="w-[17%] shrink-0">
-            <NodeCard node={node} />
+            <Reveal delay={i * 120} threshold={0.3} className="h-full">
+              <NodeCard node={node} />
+            </Reveal>
           </div>
           {i < nodes.length - 1 && (
             <div className="flex min-w-[6%] flex-1 items-center">
@@ -185,7 +196,9 @@ function PathwayMobile() {
     <div className="flex flex-col items-stretch lg:hidden">
       {nodes.map((node, i) => (
         <div key={node.name} className="contents">
-          <NodeCard node={node} />
+          <Reveal delay={i * 90} threshold={0.3}>
+            <NodeCard node={node} />
+          </Reveal>
           {i < nodes.length - 1 && (
             <div className="flex h-12 items-start justify-center" aria-hidden="true">
               <div

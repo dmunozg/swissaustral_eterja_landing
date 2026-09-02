@@ -102,6 +102,115 @@ body {
       /* header legibility */
       linear-gradient(180deg, color-mix(in srgb, var(--color-ivory) 50%, transparent) 0%, transparent 10%),
       /* copy column: ivory fading left-to-right, no hard edge */
-      linear-gradient(90deg, var(--color-ivory) 0%, color-mix(in srgb, var(--color-ivory) 92%, transparent) 34%, color-mix(in srgb, var(--color-ivory) 42%, transparent) 52%, transparent 66%);
+      linear-gradient(90deg, var(--color-ivory) 0%, color-mix(in srgb, var(--color-ivory) 92%, transparent) 34%, color-mix(in srgb, var(--color-ivory) 42%, transparent) 66%);
+  }
+}
+
+/*
+ * Scroll reveal (rvl = reveal). .rvl alone is the VISIBLE baseline:
+ * motion is opt-in via .rvl--hidden (pre-enter) removed on enter.
+ * No-JS users and prefers-reduced-motion users always see content.
+ */
+.rvl {
+  transition:
+    opacity 700ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 700ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: opacity, transform;
+}
+.rvl.rvl--hidden {
+  opacity: 0;
+  transform: translateY(18px);
+}
+.rvl.rvl--shown {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Tighter cadence for short elements */
+.rvl--tight {
+  transition-duration: 500ms;
+}
+
+/* Staggered children: applies the hidden/shown transform to direct
+ * children so a container can reveal a group as a sequence. */
+.rvl-stag.rvl--hidden > * {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 700ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 700ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.rvl-stag.rvl--shown > * {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 700ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 700ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.rvl-stag > *:nth-child(1) { transition-delay: 60ms; }
+.rvl-stag > *:nth-child(2) { transition-delay: 130ms; }
+.rvl-stag > *:nth-child(3) { transition-delay: 200ms; }
+.rvl-stag > *:nth-child(4) { transition-delay: 270ms; }
+.rvl-stag > *:nth-child(5) { transition-delay: 340ms; }
+.rvl-stag > *:nth-child(6) { transition-delay: 410ms; }
+
+/*
+ * Imagery: slow, subtle scale-in on enter (no parallax — keeps the
+ * editorial feel). Parent clips the scaled image.
+ */
+.rvl--media {
+  overflow: hidden;
+}
+.rvl--media > img {
+  transition: transform 1100ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: transform;
+}
+.rvl--media.rvl--hidden > img {
+  transform: scale(1.05);
+}
+.rvl--media.rvl--shown > img {
+  transform: scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rvl,
+  .rvl-stag > *,
+  .rvl--media > img {
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/*
+ * Hero entrance: the first-view content fades + rises once on load,
+ * staggered. Pure CSS keyframe so it runs even without JS; disabled
+ * under reduced-motion (content shown immediately).
+ */
+@keyframes heroIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.hero-intro > * {
+  opacity: 0;
+  animation: heroIn 800ms cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+.hero-intro > *:nth-child(1) { animation-delay: 120ms; }
+.hero-intro > *:nth-child(2) { animation-delay: 240ms; }
+.hero-intro > *:nth-child(3) { animation-delay: 360ms; }
+.hero-intro > *:nth-child(4) { animation-delay: 480ms; }
+.hero-intro > *:nth-child(5) { animation-delay: 600ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-intro > * {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

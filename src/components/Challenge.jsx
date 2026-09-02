@@ -1,4 +1,5 @@
 import challengeBand from '../assets/challenge-band.jpg'
+import Reveal from './Reveal'
 import { Container, CiteMark, Eyebrow, SectionTitle } from './ui'
 
 const sources = [
@@ -35,7 +36,7 @@ export default function Challenge() {
   return (
     <section id="challenge" className="seam-ivory-to-ivory-deep">
       <Container className="py-24 md:py-32">
-        <div className="max-w-3xl">
+        <Reveal className="max-w-3xl">
           <Eyebrow>The formulation challenge</Eyebrow>
           <SectionTitle className="mt-5">
             In skincare, oxidative stress is never optional.
@@ -49,21 +50,23 @@ export default function Challenge() {
             <CiteMark n={1} />
             <CiteMark n={2} />
           </p>
-        </div>
+        </Reveal>
 
         {/* Editorial band: skin under warm directional light */}
-        <figure className="mt-14">
+        <Reveal media className="mt-14">
           <img
             src={challengeBand}
             alt="Shoulder and collarbone under warm directional light, showing natural skin texture"
             className="h-56 w-full rounded-lg object-cover object-[62%_45%] sm:h-72 md:h-80"
           />
-          <figcaption className="mt-3 text-center font-display text-[11px] font-medium uppercase tracking-[0.2em] text-taupe">
+        </Reveal>
+        <Reveal delay={150} className="mt-3">
+          <figcaption className="text-center font-display text-[11px] font-medium uppercase tracking-[0.2em] text-taupe">
             Every day, the skin is under oxidative pressure — visible or not.
           </figcaption>
-        </figure>
+        </Reveal>
 
-        <div className="mt-16 grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-espresso/10 bg-espresso/10 md:grid-cols-3">
+        <Reveal stag className="mt-16 grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-espresso/10 bg-espresso/10 md:grid-cols-3">
           <Block
             kicker="What superoxide is"
             copy={
@@ -89,14 +92,16 @@ export default function Challenge() {
             intro="When superoxide and the ROS derived from it outpace the skin's antioxidant defenses, they cause real, molecular damage:"
             items={damage}
           />
-        </div>
+        </Reveal>
 
-        <p className="mt-10 max-w-3xl text-base leading-relaxed text-espresso md:text-lg">
-          Extrinsic (photo-)aging is the visible outcome of this chemistry.
-          For the formulator, it is also the reason antioxidant performance is
-          a default expectation — not a premium add-on — in product development
-          and claims substantiation.
-        </p>
+        <Reveal className="mt-10 max-w-3xl">
+          <p className="text-base leading-relaxed text-espresso md:text-lg">
+            Extrinsic (photo-)aging is the visible outcome of this chemistry.
+            For the formulator, it is also the reason antioxidant performance is
+            a default expectation — not a premium add-on — in product development
+            and claims substantiation.
+          </p>
+        </Reveal>
       </Container>
     </section>
   )
