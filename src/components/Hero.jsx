@@ -1,4 +1,3 @@
-import heroBackground from '../assets/hero-section-background.jpg'
 import { Button, Container, Eyebrow } from './ui'
 
 export default function Hero() {
@@ -6,9 +5,11 @@ export default function Hero() {
     <section
       id="top"
       className="hero-background relative isolate min-h-[100svh] overflow-hidden bg-ivory"
-      style={{ '--hero-image': `url(${heroBackground})` }}
     >
-      <div className="hero-background__image absolute inset-0 -z-20" aria-hidden="true" />
+      <div
+        className="absolute inset-0 -z-20 bg-[url(/hero-section-background.jpg)] bg-cover bg-no-repeat bg-scroll bg-position-[84%_50%] md:bg-fixed md:bg-position-[76%_40%]"
+        aria-hidden="true"
+      />
       <div className="hero-background__veil absolute inset-0 -z-10" aria-hidden="true" />
 
       <Container className="flex min-h-[100svh] items-end pb-14 pt-32 sm:pb-16 md:items-center md:py-28">
