@@ -69,3 +69,39 @@ body {
 .seam-band-ivory-to-espresso {
   background: linear-gradient(180deg, var(--color-ivory) 0, var(--color-espresso) 100%);
 }
+
+/*
+ * Hero: one 9:16 photographic plate covers the whole section.
+ * Mobile keeps the subject right-of-center and melts the copy
+ * zone into ivory from below; desktop shifts the focal point and
+ * fades a soft ivory veil from the left so the copy column sits
+ * on quiet space without a visible panel edge.
+ */
+.hero-background__image {
+  background-image: var(--hero-image);
+  background-size: cover;
+  background-position: 84% 50%;
+  background-repeat: no-repeat;
+}
+
+.hero-background__veil {
+  background:
+    /* header legibility at the top */
+    linear-gradient(180deg, color-mix(in srgb, var(--color-ivory) 70%, transparent) 0%, transparent 16%),
+    /* copy zone: melt the lower half into ivory */
+    linear-gradient(180deg, transparent 34%, color-mix(in srgb, var(--color-ivory) 78%, transparent) 64%, var(--color-ivory) 100%);
+}
+
+@media (min-width: 768px) {
+  .hero-background__image {
+    background-position: 76% 40%;
+  }
+
+  .hero-background__veil {
+    background:
+      /* header legibility */
+      linear-gradient(180deg, color-mix(in srgb, var(--color-ivory) 50%, transparent) 0%, transparent 10%),
+      /* copy column: ivory fading left-to-right, no hard edge */
+      linear-gradient(90deg, var(--color-ivory) 0%, color-mix(in srgb, var(--color-ivory) 92%, transparent) 34%, color-mix(in srgb, var(--color-ivory) 42%, transparent) 52%, transparent 66%);
+  }
+}
