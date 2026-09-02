@@ -41,6 +41,10 @@ const buttonVariants = {
   // Pulse is a CSS keyframe; disabled under prefers-reduced-motion.
   highlight:
     'highlight-cta relative bg-glacial-deep text-ivory hover:bg-espresso text-lg md:text-xl font-bold px-9 md:px-11 py-4 md:py-5 min-h-[58px] shadow-[0_10px_28px_-8px_rgba(82,128,141,0.65)]',
+  // Same sizing as primary (used where the highlighted CTA sits next to a
+  // standard button and must match it), but with the dark fill + pulse.
+  highlightMd:
+    'highlight-cta relative bg-glacial-deep text-ivory hover:bg-espresso text-sm font-semibold px-7 py-3.5 min-h-[48px]',
 }
 
 export function Button({ variant = 'primary', href = '#', children, className = '', ...rest }) {
