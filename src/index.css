@@ -75,8 +75,11 @@ body {
  * The image itself is applied with Tailwind utilities on the hero layer:
  * bg-[url(/hero-section-background.jpg)] bg-cover bg-no-repeat with
  * bg-scroll on mobile and md:bg-fixed (parallax) on desktop, plus
- * bg-position-[84%_50%] / md:bg-position-[76%_40%] for the per-viewport
- * focal crop. Only the legibility veil stays as component CSS.
+ * bg-position-[100%_50%] / md:bg-position-[76%_40%] for the per-viewport
+ * focal crop (mobile is right-aligned so the photo's natural right edge
+ * lands on the screen edge, mirroring the desktop framing — the off-screen
+ * left slice is flat background, so no content is lost). Only the
+ * legibility veil stays as component CSS.
  */
 .hero-background__veil {
   background:
