@@ -1,4 +1,4 @@
-import { Container } from './ui'
+import { Container, RegisteredMark } from './ui'
 
 const references = [
   {
@@ -49,7 +49,7 @@ export default function Footer() {
         </p>
 
         <p className="mt-8 text-[11px] uppercase tracking-[0.2em] text-ivory/30">
-          SwissAustral® — Eterja SC · Mockup
+          Swissaustral<RegisteredMark /> — Eterja SC
         </p>
       </Container>
     </footer>

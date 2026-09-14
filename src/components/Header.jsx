@@ -5,12 +5,7 @@ export default function Header() {
     <header className="absolute inset-x-0 top-0 z-20">
       <Container className="flex items-center justify-between py-6">
         <a href="#top" className="flex flex-col leading-none">
-          <span className="font-display text-[15px] font-bold tracking-[0.14em] text-espresso">
-            SWISSAUSTRAL<span className="text-terracotta">®</span>
-          </span>
-          <span className="mt-1 font-display text-[10px] font-medium uppercase tracking-[0.3em] text-taupe">
-            Eterja SC
-          </span>
+         <img src="/logo_header.png" alt="SWISSAUSTRAL®" className="h-10 w-auto" />
         </a>
         <a
           href="#contact"

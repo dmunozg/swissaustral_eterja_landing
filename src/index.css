@@ -40,6 +40,30 @@ body {
   color: var(--color-espresso);
 }
 
+.registered-mark {
+  display: inline-flex;
+  width: 0.9em;
+  height: 0.9em;
+  margin-inline: 0.12em 0.04em;
+  align-items: center;
+  justify-content: center;
+  border: 0.075em solid currentColor;
+  border-radius: 50%;
+  font-family: var(--font-sans);
+  font-size: 0.82em;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1;
+  text-indent: 0;
+  vertical-align: 0.06em;
+}
+
+.registered-mark::before {
+  content: "R";
+  font-size: 0.62em;
+  line-height: 1;
+}
+
 /*
  * Section seams: each section eases in from the previous section's
  * background color over the first ~180px, so light/dark section

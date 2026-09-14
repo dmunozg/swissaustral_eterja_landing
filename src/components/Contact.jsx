@@ -5,13 +5,13 @@ const fields = [
     id: 'name',
     label: 'Your name.',
     type: 'text',
-    placeholder: 'Ana Petrović',
+    placeholder: 'Jane Doe',
   },
   {
     id: 'company',
     label: 'The company you formulate for.',
     type: 'text',
-    placeholder: 'Studio Formule SA',
+    placeholder: 'Studio Formule LLC',
   },
   {
     id: 'role',
@@ -23,8 +23,8 @@ const fields = [
     id: 'email',
     label: 'Work email',
     type: 'email',
-    placeholder: 'ana.petrovic@studio.example',
-    helper: 'We reply within two business days.',
+    placeholder: 'jane.doe@studio.example',
+    helper: 'We will reply as soon as possible.',
   },
 ]
 
@@ -76,26 +76,6 @@ export default function Contact() {
               </p>
             </div>
 
-            {/* Consent */}
-            <label className="flex cursor-pointer items-start gap-3">
-              <input
-                type="checkbox"
-                name="consent"
-                className="mt-1 h-4 w-4 shrink-0 accent-glacial"
-              />
-              <span className="text-sm leading-relaxed text-ivory/80">
-                I agree that SwissAustral may contact me about my request and
-                store the information I provided for that purpose.{' '}
-                <a
-                  href="#privacy"
-                  className="text-ivory/50 underline decoration-ivory/30 underline-offset-2 transition-colors hover:text-ivory/80"
-                >
-                  Read our privacy notice — we do not share your details with
-                  third parties.
-                </a>
-              </span>
-            </label>
-
             {/* Turnstile placeholder */}
             <div
               className="flex h-[65px] w-full items-center justify-center rounded-md border border-dashed border-ivory/25 text-xs uppercase tracking-[0.18em] text-ivory/40"
@@ -125,17 +105,6 @@ export default function Contact() {
                 finished-product performance, clinical outcomes, or skin
                 benefits; those depend on your specific base, processing, and
                 intended use.
-              </p>
-            </div>
-            <div>
-              <p className="font-display font-semibold uppercase tracking-[0.18em] text-ivory/70">
-                What this form is not
-              </p>
-              <p className="mt-2">
-                It is not a clinical-trial registration, a finished-product
-                claim, or a guarantee of activity in any specific formulation.
-                Enzyme performance depends on the system it is incorporated
-                into.
               </p>
             </div>
           </div>

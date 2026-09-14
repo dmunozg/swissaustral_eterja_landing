@@ -59,6 +59,10 @@ export function Button({ variant = 'primary', href = '#', children, className = 
   )
 }
 
+export function RegisteredMark() {
+  return <span className="registered-mark" role="img" aria-label="Registered trademark" />
+}
+
 export function CiteMark({ n }) {
   return (
     <a

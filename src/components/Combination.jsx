@@ -1,17 +1,17 @@
 import vialsBand from '../assets/vials-band.jpg'
 import Reveal from './Reveal'
-import { Button, Container, Eyebrow, SectionTitle } from './ui'
+import { Button, Container, Eyebrow, RegisteredMark, SectionTitle } from './ui'
 
 const cards = [
   {
     name: 'SOD',
-    sub: 'Superoxide dismutase, recombinant.',
+    sub: 'Superoxide dismutase',
     body: 'The first step of the tandem. Converts superoxide to hydrogen peroxide as the initial response to oxidative pressure at the skin surface.',
     scheme: 'Superoxide → Hydrogen peroxide',
   },
   {
     name: 'Catalase',
-    sub: 'Catalase, recombinant.',
+    sub: 'Cold-Active Catalase',
     body: 'The second step of the tandem. Breaks hydrogen peroxide down into water and oxygen, closing the pathway.',
     scheme: 'Hydrogen peroxide → Water + Oxygen',
   },
@@ -25,7 +25,7 @@ export default function Combination() {
           <Eyebrow>The combination</Eyebrow>
           <SectionTitle className="mt-5">Two enzymes, one origin.</SectionTitle>
           <p className="mt-6 text-base leading-relaxed text-taupe md:text-lg">
-            SwissAustral® Eterja SC is built from two recombinant enzymes,
+            <span className="font-semibold">Swissaustral<RegisteredMark /> Eterja SC</span> is built from two recombinant enzymes,
             expressed as a defined complementary system. Both enzymes trace
             back to an organism identified in the Southern Patagonian Ice
             Field — selected because cold-adapted biology already does the

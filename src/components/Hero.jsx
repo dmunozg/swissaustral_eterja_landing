@@ -1,4 +1,4 @@
-import { Button, Container, Eyebrow } from './ui'
+import { Button, Container, Eyebrow, RegisteredMark } from './ui'
 
 export default function Hero() {
   return (
@@ -7,7 +7,7 @@ export default function Hero() {
       className="hero-background relative isolate min-h-[100svh] overflow-hidden bg-ivory"
     >
       <div
-        className="absolute inset-0 -z-20 bg-[url(/hero-section-background.jpg)] bg-no-repeat bg-scroll bg-[auto_180%] bg-position-[76%_40%] md:bg-cover md:bg-fixed"
+        className="absolute inset-0 -z-20 bg-[url(/hero-section-background.jpg)] bg-no-repeat bg-scroll bg-[auto_180%] bg-position-[76%_40%] bg-cover md:bg-fixed"
         aria-hidden="true"
       />
       <div className="hero-background__veil absolute inset-0 -z-10" aria-hidden="true" />
@@ -21,9 +21,9 @@ export default function Hero() {
           </h1>
 
           <p className="mt-7 max-w-xl text-base leading-relaxed text-taupe md:text-lg">
-            SwissAustral® Eterja SC pairs recombinant superoxide dismutase and
+            <span className="font-semibold">Swissaustral<RegisteredMark /> Eterja SC</span> pairs recombinant superoxide dismutase and
             catalase in a complementary two-step system, rooted in an
-            extremophilic organism from the Southern Patagonian Ice Field — a
+            extremophilic organism from the <span className="font-semibold">Southern Patagonian Ice Field</span> — a
             defined approach to managing superoxide and hydrogen peroxide in
             your formulations.
           </p>
@@ -37,10 +37,7 @@ export default function Hero() {
 
           <div className="mt-12 max-w-xl border-t border-espresso/15 pt-5 md:mt-14">
             <p className="font-display text-sm font-semibold tracking-tight text-espresso">
-              SwissAustral® Eterja SC
-            </p>
-            <p className="mt-1 text-sm italic text-taupe">
-              Recombinant SOD + Catalase System
+              SwissAustral<RegisteredMark /> Eterja SC
             </p>
             <p className="mt-4 font-display text-[11px] font-medium uppercase tracking-[0.22em] text-glacial-deep">
               Enzyme discovery rooted in the Southern Patagonian Ice Field

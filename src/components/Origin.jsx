@@ -1,6 +1,6 @@
 import glacier from '../assets/section3-glacier.jpg'
 import Reveal from './Reveal'
-import { Button, Container, Eyebrow, SectionTitle } from './ui'
+import { Button, Container, Eyebrow, RegisteredMark, SectionTitle } from './ui'
 
 const enzymes = [
   {
@@ -10,7 +10,7 @@ const enzymes = [
   },
   {
     name: 'CATALASE',
-    fullName: 'Catalase',
+    fullName: 'Cold-Active Catalase',
     line: 'The partner component of the system.',
   },
 ]
@@ -26,7 +26,7 @@ export default function Origin() {
             A defined enzyme system from the southern ice.
           </SectionTitle>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-taupe md:text-lg">
-            SwissAustral® Eterja SC combines two recombinant enzymes —
+            <span className="font-semibold">Swissaustral<RegisteredMark /> Eterja SC</span> combines two recombinant enzymes —
             superoxide dismutase (SOD) and catalase — in one complementary
             system for skincare formulation development. Working in tandem,
             they help neutralize the reactivity associated with superoxide and
@@ -67,9 +67,6 @@ export default function Origin() {
 
           {/* Transition to section 4 */}
           <div className="mt-12">
-            <p className="text-base leading-relaxed text-espresso">
-              Two enzymes. One coordinated response to oxidative reactivity.
-            </p>
             <Button href="#mechanism" variant="highlight" className="mt-5">
               See how they work together
             </Button>
