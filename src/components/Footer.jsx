@@ -1,4 +1,4 @@
-import { Container, RegisteredMark } from './ui'
+import { Container } from './ui'
 
 const references = [
   {
@@ -21,35 +21,41 @@ const references = [
 export default function Footer() {
   return (
     <footer className="bg-espresso text-ivory">
-      <Container className="border-t border-ivory/15 py-12">
-        <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-ivory/50">
-          References
-        </p>
-        <ol className="mt-4 space-y-2 text-xs leading-relaxed text-ivory/60">
-          {references.map((ref) => (
-            <li key={ref.id} id={ref.id}>
-              <a
-                href={ref.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline decoration-ivory/25 underline-offset-2 transition-colors hover:text-ivory/90"
-              >
-                {ref.text}
-              </a>
-            </li>
-          ))}
-        </ol>
+      <Container className="grid gap-10 border-t border-ivory/15 py-12 md:grid-cols-3 md:gap-12">
+        <div className="order-3 flex items-center justify-center md:order-1 md:justify-start">
+          <img
+            src="/logo_footer.png"
+            alt="SwissAustral Eterja SC"
+            className="w-full max-w-[220px]"
+          />
+        </div>
 
-        <p className="mt-10 max-w-3xl text-xs leading-relaxed text-ivory/40">
+        <div className="order-1 md:order-2">
+          <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-ivory/50">
+            References
+          </p>
+          <ol className="mt-4 space-y-2 text-xs leading-relaxed text-ivory/60">
+            {references.map((ref) => (
+              <li key={ref.id} id={ref.id}>
+                <a
+                  href={ref.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline decoration-ivory/25 underline-offset-2 transition-colors hover:text-ivory/90"
+                >
+                  {ref.text}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        <p className="order-2 max-w-3xl text-xs leading-relaxed text-ivory/40 md:order-3">
           Eterja SC is a recombinant enzyme system supplied for formulation
           development and evaluation. The mechanism shown is an in vitro
           biochemical rationale; enzyme performance depends on the formulation
           it is incorporated into. This page does not claim finished-product
           efficacy, skin protection, penetration, or clinical outcomes.
-        </p>
-
-        <p className="mt-8 text-[11px] uppercase tracking-[0.2em] text-ivory/30">
-          Swissaustral<RegisteredMark /> — Eterja SC
         </p>
       </Container>
     </footer>
