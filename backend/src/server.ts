@@ -4,6 +4,7 @@ import {
   SECURITY_HEADERS,
   type ContactHandler,
 } from "./contact";
+import { createMailer } from "./email";
 import { isTurnstileResponseValid, type TurnstileResponse } from "./turnstile";
 
 export const TURNSTILE_SITEVERIFY_URL =
@@ -78,7 +79,7 @@ if (import.meta.main) {
   const contact = createContactHandler({
     config,
     verifyTurnstile: createTurnstileVerifier(config),
-    sendMail: async () => {},
+    sendMail: createMailer(config),
   });
   const server = Bun.serve({
     port: config.port,
