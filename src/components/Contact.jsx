@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { trackGenerateLead } from '../google-tag.js'
 import { Container } from './ui'
 
 const fields = [
@@ -126,6 +127,7 @@ export default function Contact() {
       })
       if (response.ok) {
         form.reset()
+        trackGenerateLead()
         setStatus({
           state: 'success',
           message: 'Thank you — your message has been sent.',
