@@ -1,0 +1,20 @@
+{
+  "name": "eterja-contact-api",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch src/server.ts",
+    "start": "bun src/server.ts",
+    "test": "bun test",
+    "typecheck": "bunx tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/nodemailer": "^8.0.1",
+    "typescript": "latest"
+  },
+  "dependencies": {
+    "nodemailer": "^10.0.10"
+  }
+}
