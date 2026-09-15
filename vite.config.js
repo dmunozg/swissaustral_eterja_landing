@@ -27,6 +27,7 @@ export default defineConfig(({ command, mode }) => {
     throw new Error('VITE_GOOGLE_TAG_MANAGER_ID is required for production builds.')
   }
   return {
+    base: command === 'build' ? '/eterja/' : '/',
     plugins: [react(), tailwindcss(), ...(gtmId ? [googleTagManager(gtmId)] : [])],
   }
 })

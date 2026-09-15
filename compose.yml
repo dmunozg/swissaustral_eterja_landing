@@ -1,0 +1,24 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_TURNSTILE_SITE_KEY: ${VITE_TURNSTILE_SITE_KEY}
+        VITE_GOOGLE_TAG_MANAGER_ID: ${VITE_GOOGLE_TAG_MANAGER_ID}
+    ports:
+      - "80:80"
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - path: ./.env
+        required: false
+    environment:
+      NODE_ENV: production
+      PRODUCTION: "true"
+      TRUST_PROXY: "true"
+    restart: unless-stopped
