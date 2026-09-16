@@ -428,27 +428,52 @@ describe("contact endpoint handler", () => {
     expect(turnstileCalls).toHaveLength(1);
   });
 
-  test("returns a generic error and stops at the failing mail step", async () => {
+  test("returns a generic error, logs safe delivery details, and stops at the failing mail step", async () => {
     const { handler, mails, setMailError } = createTestHandler();
-    setMailError(new Error("smtp down"));
+    const originalConsoleError = console.error;
+    const errors: unknown[][] = [];
+    console.error = (...args: unknown[]) => errors.push(args);
+    try {
+      const smtpError = Object.assign(new Error("smtp down"), {
+        code: "ESOCKET",
+        command: "CONN",
+        responseCode: 421,
+      });
+      setMailError(smtpError);
 
-    const failed = await handler(postRequest(JSON.stringify(base)));
-    expect(failed.status).toBe(500);
-    expect(await failed.json()).toEqual({ error: "Unable to send message" });
-    expect(mails).toHaveLength(0);
+      const failed = await handler(postRequest(JSON.stringify(base)));
+      expect(failed.status).toBe(500);
+      expect(await failed.json()).toEqual({ error: "Unable to send message" });
+      expect(mails).toHaveLength(0);
+      expect(errors).toEqual([
+        [
+          "Contact email delivery failed",
+          {
+            kind: "receipt",
+            clientIp: "unknown",
+            name: "Error",
+            code: "ESOCKET",
+            command: "CONN",
+            responseCode: 421,
+          },
+        ],
+      ]);
 
-    let calls = 0;
-    const partial = createContactHandler({
-      config: TEST_CONFIG,
-      verifyTurnstile: async () => true,
-      sendMail: async (mail) => {
-        calls += 1;
-        if (mail.kind === "report") throw new Error("smtp down");
-      },
-    });
-    const partialResult = await partial(postRequest(JSON.stringify(base)));
-    expect(partialResult.status).toBe(500);
-    expect(calls).toBe(2);
+      let calls = 0;
+      const partial = createContactHandler({
+        config: TEST_CONFIG,
+        verifyTurnstile: async () => true,
+        sendMail: async (mail) => {
+          calls += 1;
+          if (mail.kind === "report") throw new Error("smtp down");
+        },
+      });
+      const partialResult = await partial(postRequest(JSON.stringify(base)));
+      expect(partialResult.status).toBe(500);
+      expect(calls).toBe(2);
+    } finally {
+      console.error = originalConsoleError;
+    }
   });
 
   test.each([

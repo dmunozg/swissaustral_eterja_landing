@@ -177,6 +177,28 @@ function defaultClientKey(request: Request, trustProxy: boolean): string {
   return request.headers.get("cf-connecting-ip")?.trim() || "unknown";
 }
 
+type MailErrorDetails = {
+  name: string;
+  code?: string;
+  command?: string;
+  responseCode?: number;
+  errno?: string;
+  syscall?: string;
+};
+
+function mailErrorDetails(error: unknown): MailErrorDetails {
+  if (!(error instanceof Error)) return { name: typeof error };
+  const details: MailErrorDetails = { name: error.name };
+  if ("code" in error && typeof error.code === "string") details.code = error.code;
+  if ("command" in error && typeof error.command === "string") details.command = error.command;
+  if ("responseCode" in error && typeof error.responseCode === "number") {
+    details.responseCode = error.responseCode;
+  }
+  if ("errno" in error && typeof error.errno === "string") details.errno = error.errno;
+  if ("syscall" in error && typeof error.syscall === "string") details.syscall = error.syscall;
+  return details;
+}
+
 export function createContactHandler(dependencies: ContactDependencies): ContactHandler {
   const attempts = new Map<string, number[]>();
   const now = dependencies.now ?? Date.now;
@@ -227,11 +249,17 @@ export function createContactHandler(dependencies: ContactDependencies): Contact
       return response(403, { error: "Unable to verify request" }, origin);
     }
 
-    try {
-      await dependencies.sendMail({ kind: "receipt", payload });
-      await dependencies.sendMail({ kind: "report", payload });
-    } catch {
-      return response(500, { error: "Unable to send message" }, origin);
+    for (const kind of ["receipt", "report"] as const) {
+      try {
+        await dependencies.sendMail({ kind, payload });
+      } catch (error) {
+        console.error("Contact email delivery failed", {
+          kind,
+          clientIp: clientKey(request),
+          ...mailErrorDetails(error),
+        });
+        return response(500, { error: "Unable to send message" }, origin);
+      }
     }
 
     return response(200, { message: "Message sent" }, origin);
