@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "build:test": "vite build --mode test",
+    "build": "node scripts/build.mjs",
+    "build:test": "node scripts/build.mjs --mode test",
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "node --test \"src/**/*.test.js\""

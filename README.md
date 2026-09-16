@@ -4,9 +4,13 @@ B2B landing page for **SwissAustral® Eterja SC**
 (recombinant SOD + Catalase System), built from the design handoff at
 `~/syncthing/Documents/SwissAustral/digital_marketing_plan/cosmetics_sod_catalase/design_handoff.md`.
 
-The page ships as a static SPA plus a small contact API: the form renders a
-Cloudflare Turnstile widget, submits to `POST /api/contact`, and a valid
-submission is delivered over SMTP as a visitor receipt plus an internal
+The page ships as a prerendered static site plus a small contact API: at
+build time the React application is rendered to HTML and injected into
+`dist/index.html`, so the initial response already contains the full page
+(headings, copy, CTA links, contact form, references) before any JavaScript
+runs. The browser then hydrates that markup with `hydrateRoot`. The form
+renders a Cloudflare Turnstile widget, submits to `POST /api/contact`, and a
+valid submission is delivered over SMTP as a visitor receipt plus an internal
 report. Production is served at https://swissaustral.com/eterja/ via Docker
 Compose (Nginx frontend, Bun backend).
 
@@ -165,6 +169,26 @@ limit. Nginx passes the header through to the API; it does not set it here.
 - Configuring the container (tags, triggers) in the Google Tag Manager portal
   is an external prerequisite.
 
+### Prerendering (build pipeline)
+
+`npm run build` (used by the Docker image) runs `scripts/build.mjs`, which:
+
+1. builds the browser app with Vite (`dist/`, base `/eterja/`);
+2. builds a temporary SSR bundle of `src/entry-server.jsx` — the same
+   `StrictMode + App` tree the browser entry renders;
+3. renders the page to an HTML string and injects it into the stable
+   `<div id="root"></div>` outlet in `dist/index.html` (`src/prerender.js`
+   rejects a missing or duplicate outlet and empty rendered output);
+4. verifies the built HTML contains the page H1, CTA links, the contact
+   form, and the references before writing it back;
+5. removes the temporary SSR bundle.
+
+The SSR build happens at compile time only: the deployed site remains a fully
+static Nginx deployment, and no server renders pages at request time.
+`npm run build:test` runs the same pipeline in Vite's `test` mode.
+Environment validation (GTM ID, Turnstile site key) is unchanged and still
+lives in `vite.config.js`.
+
 ### Contact flow (reference)
 
 Only `POST /api/contact` is served; requests must carry the exact
@@ -197,7 +221,10 @@ first, then the internal report**. All responses are generic
 | Path | Purpose |
 | --- | --- |
 | `src/` | React SPA (one component per page section) |
-| `index.html` | HTML shell; loads the Turnstile script (GTM is injected at build time) |
+| `index.html` | HTML shell with the stable prerender outlet; loads the Turnstile script (GTM is injected at build time) |
+| `scripts/build.mjs` | Build orchestrator: client build → temporary SSR build → prerender injection → output verification |
+| `src/entry-server.jsx` | Build-time server entry that renders the same `StrictMode + App` tree as the browser |
+| `src/prerender.js` (+ `src/prerender.test.js`) | Pure helper that injects prerendered markup into the built HTML outlet |
 | `vite.config.js` | Vite config, `/eterja/` base, GTM injection and validation |
 | `Dockerfile`, `nginx.conf` | Frontend image: Nginx serving the built SPA and proxying `/api/` to the backend |
 | `backend/` | Bun/TypeScript contact API, with its own `Dockerfile` and `.env.example` |
