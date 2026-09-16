@@ -77,12 +77,47 @@ test('injects the official GTM head snippet as the first head element', () => {
   const head = html.slice(html.indexOf('<head>'), html.indexOf('</head>'))
   assert.ok(
     head.startsWith(
-      `<head><script>(function(w,d,s,l,i){l=w[l]=w[l]||[];l.push({'gtm.start':new Date().getTime(),event:'gtm.js'});`,
+      `<head><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});`,
     ),
   )
   assert.ok(head.includes(`j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl`))
   assert.ok(head.includes(`})(window,document,'script','dataLayer','${GTM_ID}');`))
   assert.equal((head.match(/googletagmanager\.com\/gtm\.js/g) ?? []).length, 1)
+})
+
+function bootstrapSource(html) {
+  const head = html.slice(html.indexOf('<head>'), html.indexOf('</head>'))
+  const start = head.indexOf('<script>') + '<script>'.length
+  return head.slice(start, head.indexOf('</script>'))
+}
+
+test('GTM bootstrap does not reassign the layer name parameter (default dataLayer url)', () => {
+  const source = bootstrapSource(transformedHtml(GTM_ID))
+  assert.ok(
+    !/\bl\s*=\s*w\[l\]/.test(source),
+    'the layer name parameter l must not be reassigned to the dataLayer array',
+  )
+  const inserted = []
+  const windowStub = {}
+  const documentStub = {
+    getElementsByTagName: () => [
+      { parentNode: { insertBefore: (node) => inserted.push(node) } },
+    ],
+    createElement: (tag) => ({ tagName: tag }),
+  }
+  new Function('window', 'document', source)(windowStub, documentStub)
+
+  assert.ok(Array.isArray(windowStub.dataLayer))
+  assert.equal(windowStub.dataLayer.length, 1)
+  assert.equal(windowStub.dataLayer[0].event, 'gtm.js')
+  assert.equal(typeof windowStub.dataLayer[0]['gtm.start'], 'number')
+  assert.equal(inserted.length, 1)
+  assert.equal(inserted[0].tagName, 'script')
+  assert.equal(inserted[0].async, true)
+  assert.equal(
+    inserted[0].src,
+    `https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`,
+  )
 })
 
 test('injects the official GTM noscript iframe as the first body element', () => {
