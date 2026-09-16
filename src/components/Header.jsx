@@ -5,7 +5,11 @@ export default function Header() {
     <header className="absolute inset-x-0 top-0 z-20">
       <Container className="flex items-center justify-between py-6">
         <a href="#top" className="flex flex-col leading-none">
-         <img src="/logo_header.png" alt="SWISSAUSTRAL®" className="h-10 w-auto" />
+          <img
+            src={`${import.meta.env.BASE_URL}logo_header.png`}
+            alt="SWISSAUSTRAL®"
+            className="h-10 w-auto"
+          />
         </a>
         <a
           href="#contact"

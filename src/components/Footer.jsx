@@ -24,7 +24,7 @@ export default function Footer() {
       <Container className="grid gap-10 border-t border-ivory/15 py-12 md:grid-cols-3 md:gap-12">
         <div className="order-3 flex items-center justify-center md:order-1 md:justify-start">
           <img
-            src="/logo_footer.png"
+            src={`${import.meta.env.BASE_URL}logo_footer.png`}
             alt="SwissAustral Eterja SC"
             className="w-full max-w-[220px]"
           />
