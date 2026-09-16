@@ -1,10 +1,19 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+import { mkdtemp, rm } from 'node:fs/promises'
+import os from 'node:os'
+import path from 'node:path'
 import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
 
 const GTM_ID = 'GTM-TEST123'
 const REAL_SITE_KEY = '0x4AAAAAAAAAAAAAAAAAAAAAAA'
+const CANONICAL_URL = 'https://swissaustral.com/eterja/'
+const SOCIAL_IMAGE_URL = 'https://swissaustral.com/eterja/eterja-social.jpg'
+const PAGE_TITLE =
+  'Swissaustral® Eterja SC — Recombinant SOD + Catalase System'
+const PAGE_DESCRIPTION =
+  'Swissaustral® Eterja SC pairs recombinant superoxide dismutase and catalase in a complementary two-step system, rooted in an extremophilic organism from the Southern Patagonian Ice Field.'
 const TEST_SITE_KEYS = [
   '1x00000000000000000000AA',
   '2x00000000000000000000AB',
@@ -224,5 +233,168 @@ test('development build accepts missing and test Turnstile site keys', () => {
     withSiteKey(testKey, () =>
       assert.doesNotThrow(() => resolveConfig({ command: 'serve', mode: 'development' })),
     )
+  }
+})
+
+function metaContent(html, key) {
+  const tag = html.match(
+    new RegExp(`<meta[^>]+(?:property|name)="${key}"[^>]*>`),
+  )
+  assert.ok(tag, `missing <meta ${key}> in index.html`)
+  const content = tag[0].match(/content="([^"]*)"/)
+  assert.ok(content, `missing content attribute on <meta ${key}>`)
+  return content[1]
+}
+
+function jsonLdScripts(html) {
+  return [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
+}
+
+test('index.html declares exactly one absolute canonical for the production URL', () => {
+  const canonicals = [...indexHtml.matchAll(/<link[^>]+rel="canonical"[^>]*>/g)]
+  assert.equal(canonicals.length, 1)
+  assert.ok(canonicals[0][0].includes(`href="${CANONICAL_URL}"`))
+})
+
+test('index.html declares the favicon with a base-relative public path', () => {
+  const icons = [...indexHtml.matchAll(/<link[^>]+rel="icon"[^>]*>/g)]
+  assert.equal(icons.length, 1)
+  assert.ok(icons[0][0].includes('href="/favicon.svg"'))
+})
+
+test('index.html declares Open Graph identity, URL, and image metadata', () => {
+  assert.equal(metaContent(indexHtml, 'og:title'), PAGE_TITLE)
+  assert.equal(metaContent(indexHtml, 'og:description'), PAGE_DESCRIPTION)
+  assert.equal(metaContent(indexHtml, 'og:type'), 'website')
+  assert.equal(metaContent(indexHtml, 'og:url'), CANONICAL_URL)
+  assert.equal(metaContent(indexHtml, 'og:site_name'), 'SwissAustral')
+  assert.equal(metaContent(indexHtml, 'og:image'), SOCIAL_IMAGE_URL)
+  assert.equal(metaContent(indexHtml, 'og:image:width'), '1200')
+  assert.equal(metaContent(indexHtml, 'og:image:height'), '630')
+  assert.ok(metaContent(indexHtml, 'og:image:alt').length > 0)
+})
+
+test('index.html declares a Twitter summary card with the social image', () => {
+  assert.equal(metaContent(indexHtml, 'twitter:card'), 'summary_large_image')
+  assert.equal(metaContent(indexHtml, 'twitter:title'), PAGE_TITLE)
+  assert.equal(metaContent(indexHtml, 'twitter:description'), PAGE_DESCRIPTION)
+  assert.equal(metaContent(indexHtml, 'twitter:image'), SOCIAL_IMAGE_URL)
+})
+
+test('index.html contains exactly one parseable JSON-LD graph of visible facts', () => {
+  const scripts = jsonLdScripts(indexHtml)
+  assert.equal(scripts.length, 1)
+  const graph = JSON.parse(scripts[0][1])
+  assert.equal(graph['@context'], 'https://schema.org')
+  const nodes = Object.fromEntries(graph['@graph'].map((node) => [node['@type'], node]))
+  const page = nodes.WebPage
+  const product = nodes.Product
+  const brand = nodes.Brand
+  assert.ok(page && product && brand, 'expected WebPage, Product, and Brand nodes')
+  assert.equal(page.url, CANONICAL_URL)
+  assert.equal(page.name, PAGE_TITLE)
+  assert.equal(product.brand['@id'], brand['@id'])
+  assert.equal(brand.name, 'SwissAustral')
+  assert.equal(product.image, SOCIAL_IMAGE_URL)
+  assert.ok(product.name.includes('Eterja SC'))
+  assert.ok(product.description.length > 0)
+  const serialized = scripts[0][1]
+  for (const forbidden of [
+    'Offer',
+    'AggregateRating',
+    'Review',
+    'FAQPage',
+    'Medical',
+    'price',
+    'ratingValue',
+  ]) {
+    assert.ok(
+      !serialized.includes(forbidden),
+      `JSON-LD must not contain "${forbidden}" (no fabricated commerce or medical data)`,
+    )
+  }
+})
+
+test('static page metadata is ordered after the GTM head snippet', () => {
+  const html = transformedHtml(GTM_ID)
+  const head = html.slice(html.indexOf('<head>'), html.indexOf('</head>'))
+  const gtmEnd = head.indexOf('</script>')
+  assert.ok(gtmEnd > -1)
+  for (const marker of [
+    'rel="canonical"',
+    'rel="icon"',
+    'property="og:title"',
+    'name="twitter:card"',
+    'application/ld+json',
+  ]) {
+    const index = head.indexOf(marker)
+    assert.ok(index > -1, `missing ${marker} in the built head`)
+    assert.ok(index > gtmEnd, `${marker} must stay after the GTM snippet`)
+  }
+})
+
+function jpegDimensions(buffer) {
+  assert.equal(buffer[0], 0xff, 'expected JPEG SOI marker')
+  assert.equal(buffer[1], 0xd8, 'expected JPEG SOI marker')
+  let offset = 2
+  while (offset + 4 < buffer.length) {
+    assert.equal(buffer[offset], 0xff, 'expected JPEG marker')
+    const marker = buffer[offset + 1]
+    const size = buffer.readUInt16BE(offset + 2)
+    if (
+      marker >= 0xc0 &&
+      marker <= 0xcf &&
+      marker !== 0xc4 &&
+      marker !== 0xc8 &&
+      marker !== 0xcc
+    ) {
+      return {
+        height: buffer.readUInt16BE(offset + 5),
+        width: buffer.readUInt16BE(offset + 7),
+      }
+    }
+    offset += 2 + size
+  }
+  throw new Error('no SOF marker found')
+}
+
+test('built index.html serves the favicon and social image beneath /eterja/', async () => {
+  const { build } = await import('vite')
+  const outDir = await mkdtemp(path.join(os.tmpdir(), 'eterja-build-'))
+  const previousGtm = process.env.VITE_GOOGLE_TAG_MANAGER_ID
+  const previousKey = process.env.VITE_TURNSTILE_SITE_KEY
+  process.env.VITE_GOOGLE_TAG_MANAGER_ID = GTM_ID
+  process.env.VITE_TURNSTILE_SITE_KEY = REAL_SITE_KEY
+  try {
+    await build({
+      root: fileURLToPath(new URL('..', import.meta.url)),
+      configFile: fileURLToPath(new URL('../vite.config.js', import.meta.url)),
+      mode: 'production',
+      logLevel: 'error',
+      build: { outDir, emptyOutDir: false },
+    })
+    const built = readFileSync(path.join(outDir, 'index.html'), 'utf8')
+    assert.ok(built.includes(`href="${CANONICAL_URL}"`), 'canonical must survive the build')
+    assert.ok(
+      built.includes('href="/eterja/favicon.svg"'),
+      'Vite must rewrite the public favicon path with the /eterja/ base',
+    )
+    assert.ok(!built.includes('href="/favicon.svg"'))
+    readFileSync(path.join(outDir, 'favicon.svg'))
+    assert.ok(
+      built.includes(`content="${SOCIAL_IMAGE_URL}"`),
+      'social image must keep its absolute production URL',
+    )
+    const { width, height } = jpegDimensions(
+      readFileSync(path.join(outDir, 'eterja-social.jpg')),
+    )
+    assert.equal(width, 1200)
+    assert.equal(height, 630)
+  } finally {
+    if (previousGtm === undefined) delete process.env.VITE_GOOGLE_TAG_MANAGER_ID
+    else process.env.VITE_GOOGLE_TAG_MANAGER_ID = previousGtm
+    if (previousKey === undefined) delete process.env.VITE_TURNSTILE_SITE_KEY
+    else process.env.VITE_TURNSTILE_SITE_KEY = previousKey
+    await rm(outDir, { recursive: true, force: true })
   }
 })
