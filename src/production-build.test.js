@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs'
 import { mkdtemp, rm } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
-import { test } from 'node:test'
+import { after, before, test } from 'node:test'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { injectPrerender } from './prerender.js'
 
@@ -25,6 +25,20 @@ const TEST_SITE_KEYS = [
 
 process.env.VITE_GOOGLE_TAG_MANAGER_ID = GTM_ID
 process.env.VITE_TURNSTILE_SITE_KEY = REAL_SITE_KEY
+
+const originalCwd = process.cwd()
+let isolatedCwd
+before(async () => {
+  isolatedCwd = await mkdtemp(path.join(os.tmpdir(), 'eterja-config-test-'))
+  process.chdir(isolatedCwd)
+})
+after(async () => {
+  try {
+    process.chdir(originalCwd)
+  } finally {
+    await rm(isolatedCwd, { recursive: true, force: true })
+  }
+})
 
 const { default: resolveConfig } = await import('../vite.config.js')
 
