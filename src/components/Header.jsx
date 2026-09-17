@@ -8,6 +8,8 @@ export default function Header() {
           <img
             src={`${import.meta.env.BASE_URL}logo_header.png`}
             alt="SWISSAUSTRAL®"
+            width={1496}
+            height={321}
             className="h-10 w-auto"
           />
         </a>

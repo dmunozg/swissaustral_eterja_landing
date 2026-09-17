@@ -42,6 +42,28 @@ const TURNSTILE_SITE_KEY =
 const CONTACT_API_URL =
   import.meta.env.VITE_CONTACT_API_URL ??
   `${import.meta.env.BASE_URL}api/contact`
+const TURNSTILE_API_URL =
+  'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
+const TURNSTILE_PRELOAD_ROOT_MARGIN = '0px 0px 800px 0px'
+
+let turnstileScriptPromise = null
+
+function loadTurnstileScript() {
+  if (!turnstileScriptPromise) {
+    turnstileScriptPromise = new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = TURNSTILE_API_URL
+      script.async = true
+      script.onload = () => resolve()
+      script.onerror = () => {
+        turnstileScriptPromise = null
+        reject(new Error('Turnstile script failed to load'))
+      }
+      document.head.appendChild(script)
+    })
+  }
+  return turnstileScriptPromise
+}
 
 const inputClass =
   'w-full rounded-md border border-espresso/20 bg-ivory px-4 py-3.5 text-[15px] text-espresso placeholder:text-taupe-light focus:border-glacial focus:outline-none focus:ring-2 focus:ring-glacial/30'
@@ -54,40 +76,53 @@ const statusStyles = {
 }
 
 export default function Contact() {
+  const sectionRef = useRef(null)
   const turnstileRef = useRef(null)
   const widgetIdRef = useRef(null)
   const statusRef = useRef(null)
+  const [turnstileReady, setTurnstileReady] = useState(false)
   const [status, setStatus] = useState({ state: 'idle', message: '' })
 
   useEffect(() => {
-    let disposed = false
-    let timer = null
-
-    const renderWidget = () => {
-      if (disposed) return
-      if (!window.turnstile) {
-        timer = setTimeout(renderWidget, 150)
-        return
-      }
-      widgetIdRef.current = window.turnstile.render(turnstileRef.current, {
-        sitekey: TURNSTILE_SITE_KEY,
-        action: 'contact',
-        size: 'flexible',
-        theme: 'dark',
-      })
+    const section = sectionRef.current
+    if (!section) return undefined
+    const load = () => {
+      loadTurnstileScript().then(() => setTurnstileReady(true)).catch(() => {})
     }
+    if (typeof IntersectionObserver === 'undefined') {
+      load()
+      return undefined
+    }
+    let started = false
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (started || !entries.some((entry) => entry.isIntersecting)) return
+        started = true
+        observer.disconnect()
+        load()
+      },
+      { rootMargin: TURNSTILE_PRELOAD_ROOT_MARGIN },
+    )
+    observer.observe(section)
+    return () => observer.disconnect()
+  }, [])
 
-    renderWidget()
+  useEffect(() => {
+    if (!turnstileReady || !window.turnstile) return undefined
+    widgetIdRef.current = window.turnstile.render(turnstileRef.current, {
+      sitekey: TURNSTILE_SITE_KEY,
+      action: 'contact',
+      size: 'flexible',
+      theme: 'dark',
+    })
 
     return () => {
-      disposed = true
-      if (timer !== null) clearTimeout(timer)
       if (widgetIdRef.current !== null && window.turnstile) {
         window.turnstile.remove(widgetIdRef.current)
         widgetIdRef.current = null
       }
     }
-  }, [])
+  }, [turnstileReady])
 
   useEffect(() => {
     if (status.state !== 'idle') statusRef.current?.focus()
@@ -154,7 +189,7 @@ export default function Contact() {
   }
 
   return (
-    <section id="contact" className="bg-espresso text-ivory">
+    <section id="contact" ref={sectionRef} className="bg-espresso text-ivory">
       <Container className="py-24 md:py-32">
         <div className="mx-auto max-w-[640px]">
           <h2 className="font-display text-3xl font-semibold leading-tight tracking-tight text-ivory md:text-[2.4rem]">

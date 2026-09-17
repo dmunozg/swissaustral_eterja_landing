@@ -4,7 +4,8 @@ import { mkdtemp, rm } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 import { test } from 'node:test'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
+import { injectPrerender } from './prerender.js'
 
 const GTM_ID = 'GTM-TEST123'
 const REAL_SITE_KEY = '0x4AAAAAAAAAAAAAAAAAAAAAAA'
@@ -143,9 +144,23 @@ test('does not use the legacy gtag snippet', () => {
   assert.ok(!html.includes('gtag'))
 })
 
-test('keeps the Turnstile script intact', () => {
+test('initial html defers the Turnstile script to the contact section', () => {
   const html = transformedHtml(GTM_ID)
-  assert.ok(html.includes('https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'))
+  assert.ok(
+    !html.includes('challenges.cloudflare.com/turnstile/v0/api.js'),
+    'the Turnstile script must not be requested on initial page load',
+  )
+  assert.ok(
+    html.includes('<link rel="preconnect" href="https://challenges.cloudflare.com" />'),
+    'the challenges.cloudflare.com preconnect must stay for the deferred load',
+  )
+})
+
+test('index.html preloads the hero image with a base-relative public path', () => {
+  const preloads = [...indexHtml.matchAll(/<link[^>]+rel="preload"[^>]*>/g)]
+  assert.equal(preloads.length, 1, 'expected exactly one preload link')
+  assert.ok(preloads[0][0].includes('as="image"'))
+  assert.ok(preloads[0][0].includes('href="/hero-section-background.jpg"'))
 })
 
 function withSiteKey(value, fn) {
@@ -358,20 +373,31 @@ function jpegDimensions(buffer) {
   throw new Error('no SOF marker found')
 }
 
-test('built index.html serves the favicon and social image beneath /eterja/', async () => {
+test('built prerendered index.html serves metadata, preload, and images beneath /eterja/', async () => {
   const { build } = await import('vite')
+  const root = fileURLToPath(new URL('..', import.meta.url))
   const outDir = await mkdtemp(path.join(os.tmpdir(), 'eterja-build-'))
+  const ssrOutDir = path.join(root, 'node_modules', '.eterja-test-ssr')
+  const configFile = fileURLToPath(new URL('../vite.config.js', import.meta.url))
   const previousGtm = process.env.VITE_GOOGLE_TAG_MANAGER_ID
   const previousKey = process.env.VITE_TURNSTILE_SITE_KEY
   process.env.VITE_GOOGLE_TAG_MANAGER_ID = GTM_ID
   process.env.VITE_TURNSTILE_SITE_KEY = REAL_SITE_KEY
   try {
     await build({
-      root: fileURLToPath(new URL('..', import.meta.url)),
-      configFile: fileURLToPath(new URL('../vite.config.js', import.meta.url)),
+      root,
+      configFile,
       mode: 'production',
       logLevel: 'error',
       build: { outDir, emptyOutDir: false },
+    })
+    await build({
+      root,
+      configFile,
+      mode: 'production',
+      logLevel: 'error',
+      publicDir: false,
+      build: { ssr: 'src/entry-server.jsx', outDir: ssrOutDir, emptyOutDir: true },
     })
     const built = readFileSync(path.join(outDir, 'index.html'), 'utf8')
     assert.ok(built.includes(`href="${CANONICAL_URL}"`), 'canonical must survive the build')
@@ -390,11 +416,62 @@ test('built index.html serves the favicon and social image beneath /eterja/', as
     )
     assert.equal(width, 1200)
     assert.equal(height, 630)
+
+    const prerendered = injectPrerender(
+      built,
+      (await import(pathToFileURL(path.join(ssrOutDir, 'entry-server.js')).href)).render(),
+    )
+    assert.ok(
+      prerendered.includes('rel="preload" as="image" href="/eterja/hero-section-background.jpg"'),
+      'Vite must rewrite the hero preload with the /eterja/ base',
+    )
+    assert.ok(
+      !prerendered.includes('challenges.cloudflare.com/turnstile/v0/api.js'),
+      'the Turnstile script must not be eager in the built html',
+    )
+    const entryMatch = prerendered.match(/<script[^>]+type="module"[^>]+src="([^"]+)"/)
+    assert.ok(entryMatch, 'built html must reference the module entry')
+    const entryJs = readFileSync(
+      path.join(outDir, entryMatch[1].replace(/^\/eterja\//, '')),
+      'utf8',
+    )
+    assert.ok(
+      entryJs.includes('challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'),
+      'the deferred Turnstile loader must ship in the client bundle',
+    )
+    const imgs = [...prerendered.matchAll(/<img\b[^>]*>/g)]
+    assert.equal(imgs.length, 6, 'expected the six landing images')
+    const headerImg = imgs.find((img) => img[0].includes('logo_header.png'))
+    assert.ok(headerImg, 'header logo missing from the prerendered html')
+    assert.ok(!/loading=/.test(headerImg[0]), 'header logo must stay eager')
+    for (const img of imgs) {
+      assert.ok(
+        /width="\d+"/.test(img[0]),
+        `image is missing its intrinsic width: ${img[0].slice(0, 100)}`,
+      )
+      assert.ok(
+        /height="\d+"/.test(img[0]),
+        `image is missing its intrinsic height: ${img[0].slice(0, 100)}`,
+      )
+    }
+    const deferredImgs = imgs.filter((img) => !img[0].includes('logo_header.png'))
+    assert.equal(deferredImgs.length, 5, 'expected five below-fold images')
+    for (const img of deferredImgs) {
+      assert.ok(
+        img[0].includes('loading="lazy"'),
+        `below-fold image must be lazy: ${img[0].slice(0, 100)}`,
+      )
+      assert.ok(
+        img[0].includes('decoding="async"'),
+        `below-fold image must decode async: ${img[0].slice(0, 100)}`,
+      )
+    }
   } finally {
     if (previousGtm === undefined) delete process.env.VITE_GOOGLE_TAG_MANAGER_ID
     else process.env.VITE_GOOGLE_TAG_MANAGER_ID = previousGtm
     if (previousKey === undefined) delete process.env.VITE_TURNSTILE_SITE_KEY
     else process.env.VITE_TURNSTILE_SITE_KEY = previousKey
     await rm(outDir, { recursive: true, force: true })
+    await rm(ssrOutDir, { recursive: true, force: true })
   }
 })

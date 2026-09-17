@@ -39,6 +39,10 @@ export default function Combination() {
         <img
           src={vialsBand}
           alt="Two minimal amber glass vials with white cap bands on a warm ivory surface"
+          width={1600}
+          height={679}
+          loading="lazy"
+          decoding="async"
           className="h-52 w-full rounded-lg object-cover object-center sm:h-64 md:h-72"
         />
       </Reveal>

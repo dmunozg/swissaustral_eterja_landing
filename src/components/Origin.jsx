@@ -78,6 +78,10 @@ export default function Origin() {
           <img
             src={glacier}
             alt="Glacier of the Southern Patagonian Ice Field between dark granite mountains"
+            width={1200}
+            height={1607}
+            loading="lazy"
+            decoding="async"
             className="absolute inset-0 h-full w-full object-cover"
           />
           <div

@@ -57,6 +57,10 @@ export default function Challenge() {
           <img
             src={challengeBand}
             alt="Shoulder and collarbone under warm directional light, showing natural skin texture"
+            width={1600}
+            height={679}
+            loading="lazy"
+            decoding="async"
             className="h-56 w-full rounded-lg object-cover object-[62%_45%] sm:h-72 md:h-80"
           />
         </Reveal>

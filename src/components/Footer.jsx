@@ -26,6 +26,10 @@ export default function Footer() {
           <img
             src={`${import.meta.env.BASE_URL}logo_footer.png`}
             alt="SwissAustral Eterja SC"
+            width={1473}
+            height={613}
+            loading="lazy"
+            decoding="async"
             className="w-full max-w-[220px]"
           />
         </div>

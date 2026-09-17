@@ -57,6 +57,10 @@ export default function Mechanism() {
           <img
             src={iceBand}
             alt="Glacial ice with deep blue crevasse lanes and pale turquoise meltwater"
+            width={1600}
+            height={679}
+            loading="lazy"
+            decoding="async"
             className="absolute inset-0 h-full w-full object-cover"
           />
         </Reveal>
