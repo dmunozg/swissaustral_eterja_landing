@@ -288,7 +288,7 @@ test('index.html declares exactly one absolute canonical for the production URL'
 test('index.html declares the favicon with a base-relative public path', () => {
   const icons = [...indexHtml.matchAll(/<link[^>]+rel="icon"[^>]*>/g)]
   assert.equal(icons.length, 1)
-  assert.ok(icons[0][0].includes('href="/favicon.svg"'))
+  assert.ok(icons[0][0].includes('href="/favicon.png"'))
 })
 
 test('index.html declares Open Graph identity, URL, and image metadata', () => {
@@ -416,11 +416,11 @@ test('built prerendered index.html serves metadata, preload, and images beneath 
     const built = readFileSync(path.join(outDir, 'index.html'), 'utf8')
     assert.ok(built.includes(`href="${CANONICAL_URL}"`), 'canonical must survive the build')
     assert.ok(
-      built.includes('href="/eterja/favicon.svg"'),
+      built.includes('href="/eterja/favicon.png"'),
       'Vite must rewrite the public favicon path with the /eterja/ base',
     )
-    assert.ok(!built.includes('href="/favicon.svg"'))
-    readFileSync(path.join(outDir, 'favicon.svg'))
+    assert.ok(!built.includes('href="/favicon.png"'))
+    readFileSync(path.join(outDir, 'favicon.png'))
     assert.ok(
       built.includes(`content="${SOCIAL_IMAGE_URL}"`),
       'social image must keep its absolute production URL',
