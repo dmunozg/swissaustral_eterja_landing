@@ -189,6 +189,24 @@ static Nginx deployment, and no server renders pages at request time.
 Environment validation (GTM ID, Turnstile site key) is unchanged and still
 lives in `vite.config.js`.
 
+### Static delivery: compression and caching
+
+`nginx.conf` enables gzip for the site's text-based responses (HTML, CSS,
+JavaScript, JSON, SVG) and adds `Vary: Accept-Encoding` so intermediary
+caches key the compressed variants. Proxied `/api/` responses are neither
+compressed nor annotated by Nginx.
+
+- `/assets/` — Vite's content-hashed build output — is served with
+  `Cache-Control: public, max-age=31536000, immutable`. The filename changes
+  whenever the content changes, so the one-year immutable lifetime is safe.
+- The HTML and the unhashed public files at the site root (favicon, logos,
+  hero background, social image, `icons.svg`) are served with
+  `Cache-Control: no-cache`: clients may store them but must revalidate
+  before reuse. They never receive immutable caching because their URLs are
+  stable across deploys.
+- `/api/` is proxied to the backend unchanged: Nginx sets no cache headers
+  and does not compress those responses.
+
 ### Contact flow (reference)
 
 Only `POST /api/contact` is served; requests must carry the exact
@@ -226,7 +244,7 @@ first, then the internal report**. All responses are generic
 | `src/entry-server.jsx` | Build-time server entry that renders the same `StrictMode + App` tree as the browser |
 | `src/prerender.js` (+ `src/prerender.test.js`) | Pure helper that injects prerendered markup into the built HTML outlet |
 | `vite.config.js` | Vite config, `/eterja/` base, GTM injection and validation |
-| `Dockerfile`, `nginx.conf` | Frontend image: Nginx serving the built SPA and proxying `/api/` to the backend |
+| `Dockerfile`, `nginx.conf` | Frontend image: Nginx serving the built SPA (compression and caching policy) and proxying `/api/` to the backend |
 | `backend/` | Bun/TypeScript contact API, with its own `Dockerfile` and `.env.example` |
 | `compose.yml` | Production stack: Nginx published, backend private |
 | `compose.dev.yml` | Development stack: Vite + Bun watch mode |
